@@ -208,7 +208,7 @@ jobs:
           crossflags: "-g -O2 -fcommon"
           configure-params: "--enable-win64 --with-vulkan"
       - name: Cofigure wine64 (24)
-        if: ${{ martrix.CROSS_OVER_VERSION >= '24'}}
+        if: ${{ matrix.CROSS_OVER_VERSION >= '24'}}
         uses: ./.github/actions.configure_wine
         with:
           winearch: "wine64"
