@@ -24,8 +24,8 @@ jobs:
     runs-on:  macos-latest
     env:
       # crossover source code to be downloaded
-      CROSS_OVER_SOURCE_URL: https://media.codeweavers.com/pub/crossover/source/crossover-sources-21.2.0.tar.gz
-      CROSS_OVER_LOCAL_FILE: crossover-22.0.1
+      CROSS_OVER_SOURCE_URL: https://media.codeweavers.com/pub/crossover/source/crossover-sources-24.0.6.tar.gz
+      CROSS_OVER_LOCAL_FILE: crossover-24.0.6
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -77,7 +77,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        CROSS_OVER_VERSION: [22.0.1, 21.2.0, 20.0.4, 19.0.2] # 22.0.0, 21.1.0, 21.0.0, 20.0.2, 20.0.1, 20.0.0, 19.0.1, 19.0.0
+        CROSS_OVER_VERSION: [24.0.6, 22.0.1, 21.2.0, 20.0.4, 19.0.2] # 22.0.0, 21.1.0, 21.0.0, 20.0.2, 20.0.1, 20.0.0, 19.0.1, 19.0.0
     runs-on:  macos-latest
 
     env:
@@ -115,7 +115,8 @@ jobs:
                         krb5               \
                         molten-vk          \
                         sane-backends      \
-                        sdl2
+                        sdl2               \ 
+                        quartz
 
       - name: Install Wine Runtime Dependencies (pre 22)
         if: ${{ matrix.CROSS_OVER_VERSION < '22' }}
@@ -124,7 +125,7 @@ jobs:
                         little-cms2        \
                         libpng             \
                         mpg123
-
+                        
       - name: Add bison, cx-llvm, flex & krb5 to $PATH
         run: |
           set -x
@@ -206,6 +207,14 @@ jobs:
           build-dir: "${{ env.BUILDROOT }}/wine64"
           crossflags: "-g -O2 -fcommon"
           configure-params: "--enable-win64 --with-vulkan"
+      - name: Cofigure wine64 (24)
+        if: ${{ martrix.CROSS_OVER_VERSION >= '24'}}
+        uses: ./.github/actions.configure_wine
+        with:
+          winearch: "wine64"
+          build-dir: "${{ env.BUILDROOT  }}/wine64"
+          configure-params: "--disable-win16 --without-alsa --without-dbus"
+            
 
       ############ Build 64bit Version ##############
 
@@ -282,7 +291,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        CROSS_OVER_VERSION: [22.0.1] # 22.0.0, 21.2.0, 20.0.4, 19.0.2, 21.1.0, 21.0.0, 20.0.2, 20.0.1, 20.0.0
+        CROSS_OVER_VERSION: [24.0.6] # 22.0.0, 21.2.0, 20.0.4, 19.0.2, 21.1.0, 21.0.0, 20.0.2, 20.0.1, 20.0.0
     runs-on:  macos-latest
     needs: wine-crossover
 
